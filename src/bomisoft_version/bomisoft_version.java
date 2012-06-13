@@ -569,21 +569,15 @@ class DB {
     }
 }
 
-/**
- * 
- * @author user
- */
 public class bomisoft_version {
 
-    /**
-     * 
-     * @param args
-     */
     public static void main(String[] args) {
+        //Pobranie konfiguracji zmiennych globalnych z pliku conf.properties
         GlobalDataStore.GlobalDataUpdate();
+        //Ustawienie zmiennej wymuszonej aktualizacji na "false"
         Boolean up = false;
+        //Pozyskanie parametru pierwszego i ustawienie zmiennej wymuszanej aktualizacji na true
         try {
-
             if (args.length > 0) {
                 System.out.println("Args " + args[0]);
                 if (args[0].matches("upgrade")) {
@@ -594,7 +588,6 @@ public class bomisoft_version {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //GlobalDataStore.downloadFileWithAuth("http://mcvps.waw.pl/auth/Citizens.sh", "A520", "rce", "Citizens.sh");
         File jarFile;
         try {
             CodeSource codeSource = bomisoft_version.class.getProtectionDomain().getCodeSource();
@@ -609,39 +602,52 @@ public class bomisoft_version {
                 ex.printStackTrace();
             }
         }
+        //Test wersji programu głównego
         GlobalDataStore.CheckUpdate("http://mcvps.waw.pl/auth/version.properties", "A520", "rce", up);
         System.out.println("Zmienna local_srv--->");
+        //Klasa danych serwera lokalnego
         DB local_srv = new DB();
-        //local_srv.SETTING();
+        //Wczytanie danych serwera lokalnego
         local_srv.PROP("/db.properties");
+        //Połaczenie z serwerem lokalnym
         local_srv.CONNECT();
+        //Pobranie danych o bazie BLOZ
         local_srv.GET_BLOZ();
+        //Pobranie ID apteki z bazy
         local_srv.GET_ID();
+        //Pobranie danych o ostatniej aktualizacji programów
         local_srv.GET_AKT();
+        //Pobranie danych o ostatniej aktualizacji recept skradzionych
         local_srv.GET_REC();
+        //Pozyskanie z plików danych o backupach
         local_srv.GET_RAPORT();
+        //Rozłączenie z baza lokalną
         local_srv.DISCONNECT();
         System.out.println("Zmienna dest_srv--->");
+        //Klasa danych serwera docelowego
         DB dest_srv = new DB();
-        //dest_srv.SETTING("MySQL", "mcvps.waw.pl", "3306", "bomisoft", "bomisoft", "bomisoft!2345");
-        //dest_srv.PROP("/dest.properties");
+        //Pobieranie konfiguracji serwera docelowego
         GlobalDataStore.downloadPropWithAuth("http://mcvps.waw.pl/auth/dest.properties", "A520", "rce", dest_srv);
+        //Połączenie z baza serwera docelowego
         dest_srv.CONNECT();
+        //Usunięcie pliku konfiguracji serwera docelowego
         File files = new File("dest.properties");
         if (files.exists()) {
             files.delete();
         }
+        //Usunięcie pliku wersji
         files = new File("version.properties");
         if (files.exists()) {
             files.delete();
         }
-        //if(GlobalDataStore.DEBUG==true)
-        //    dest_srv.GET_BLOZ();
+        //Test poprawności połączenia z baza docelową
         if (local_srv.conn != null) {
             if (local_srv.ID != 0) {
+                //Wysłanie raportu do serwera docelowego
                 dest_srv.SEND_RAPORT(local_srv);
             }
         }
+        //Rozłaczenie się z serwerem docelowym
         dest_srv.DISCONNECT();
     }
 }
