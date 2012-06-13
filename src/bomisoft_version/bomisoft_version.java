@@ -487,7 +487,8 @@ class DB {
                             this.RAP += line + "\n";
                         }
                     } else if (listOfFiles[i].isDirectory()) {
-                        System.out.println("Directory " + listOfFiles[i].getName());
+                        if(GlobalDataStore.DEBUG==true)
+                            System.out.println("Directory " + listOfFiles[i].getName());
                     }
                 }
                 if (this.RAP.length() == 0) {
