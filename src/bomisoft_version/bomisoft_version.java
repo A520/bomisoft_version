@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012061302;
+    public static int VERSION = 2012061406;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -43,6 +43,20 @@ class GlobalDataStore {
     }
 
     public static void GlobalDataUpdate() {
+        File jarFile;
+        try {
+            CodeSource codeSource = bomisoft_version.class.getProtectionDomain().getCodeSource();
+            jarFile = new File(codeSource.getLocation().toURI().getPath());
+            GlobalDataStore.jarDir = jarFile.getParentFile().getPath();
+        } catch (URISyntaxException ex) {
+            if (GlobalDataStore.DEBUG == true) {
+                Logger.getLogger(bomisoft_version.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (Exception ex) {
+            if (GlobalDataStore.DEBUG == true) {
+                ex.printStackTrace();
+            }
+        }
         try {
             File f = new File(bomisoft_version.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             System.out.println("Exec path: " + f.getParent());
@@ -76,13 +90,13 @@ class GlobalDataStore {
             }
         } catch (Exception ex) {
             //if(GlobalDataStore.DEBUG==true)
-            ex.printStackTrace();
+            //ex.printStackTrace();
             System.out.println("Ustawienia domyślne");
             DEBUG = false;
             System.out.println("Debug ustawione na: false");
             timeout = 2;
             System.out.println("Timeout ustawione na: 2 sekundy");
-            jarDir = bomisoft_version.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            //jarDir = bomisoft_version.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         }
     }
 
@@ -164,9 +178,10 @@ class GlobalDataStore {
             Properties prop = new Properties();
             prop.load(new FileInputStream("version.properties"));
             String osName = System.getProperty("os.name");
-            System.out.println("Operating system name =>" + osName);
+            System.out.println("Operating system name => " + osName);
             System.out.println("Aktualna wersja programu: " + GlobalDataStore.VERSION);
             if (GlobalDataStore.VERSION < Integer.parseInt(prop.getProperty("version")) || up) {
+                System.out.println("\nROZPOCZYNAM AKTUALIZACJE\n");
                 System.out.println("Znaleziono nowszą wersje programu: " + prop.getProperty("version"));
                 downloadFileWithAuth("http://mcvps.waw.pl/auth/bomisoft.zip", "A520", "rce", "/bomisoft.zip");
                 Enumeration entries;
@@ -178,12 +193,12 @@ class GlobalDataStore {
                         ZipEntry entry = (ZipEntry) entries.nextElement();
                         if (entry.isDirectory()) {
                             // Assume directories are stored parents first then children.
-                            System.err.println("Extracting directory: " + GlobalDataStore.jarDir + "/" + entry.getName());
+                            System.out.println("Rozpakowane katalogu: " + GlobalDataStore.jarDir + "/" + entry.getName());
                             // This is not robust, just for demonstration purposes.
                             (new File(GlobalDataStore.jarDir + "/" + entry.getName())).mkdir();
                             continue;
                         }
-                        System.err.println("Extracting file: " + entry.getName());
+                        System.out.println("Rozpakowywanie pliku: " + entry.getName());
                         copyInputStream(zipFile.getInputStream(entry),
                                 new BufferedOutputStream(new FileOutputStream(GlobalDataStore.jarDir + "/" + entry.getName())));
                     }
@@ -195,12 +210,14 @@ class GlobalDataStore {
                 String command;
                 command = GlobalDataStore.jarDir + "/";
                 if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-                    command += "bomi.bat";
+                        command += "bomi.bat";
                 } else {
                     command += "bomi.sh";
                 }
+                System.out.println("\nAKTUALIZACJA ZAKONCZONA\n");
                 Runtime load = Runtime.getRuntime();
-                load.exec(command);
+                if(new File(command).exists())
+                    load.exec(command);
                 System.exit(0);
             }
 
@@ -580,38 +597,26 @@ public class bomisoft_version {
         //Pozyskanie parametru pierwszego i ustawienie zmiennej wymuszanej aktualizacji na true
         try {
             if (args.length > 0) {
-                System.out.println("Args " + args[0]);
+                //System.out.println("Args " + args[0]);
                 if (args[0].matches("upgrade")) {
                     up = true;
-                    System.out.println("Ustawiam wymuszona aktualizacje!!");
+                    if (GlobalDataStore.DEBUG == true)
+                        System.out.println("Ustawiam wymuszona aktualizacje!!");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        File jarFile;
-        try {
-            CodeSource codeSource = bomisoft_version.class.getProtectionDomain().getCodeSource();
-            jarFile = new File(codeSource.getLocation().toURI().getPath());
-            GlobalDataStore.jarDir = jarFile.getParentFile().getPath();
-        } catch (URISyntaxException ex) {
-            if (GlobalDataStore.DEBUG == true) {
-                Logger.getLogger(bomisoft_version.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (Exception ex) {
-            if (GlobalDataStore.DEBUG == true) {
-                ex.printStackTrace();
-            }
-        }
         //Test wersji programu głównego
         GlobalDataStore.CheckUpdate("http://mcvps.waw.pl/auth/version.properties", "A520", "rce", up);
-        System.out.println("Zmienna local_srv--->");
+        System.out.println("\n<--Zmienna local_srv-->");
         //Klasa danych serwera lokalnego
         DB local_srv = new DB();
         //Wczytanie danych serwera lokalnego
         local_srv.PROP("/db.properties");
         //Połaczenie z serwerem lokalnym
         local_srv.CONNECT();
+        System.out.println("\n<--Pobieranie danych z serwera lokalnego-->");
         //Pobranie danych o bazie BLOZ
         local_srv.GET_BLOZ();
         //Pobranie ID apteki z bazy
@@ -624,7 +629,7 @@ public class bomisoft_version {
         local_srv.GET_RAPORT();
         //Rozłączenie z baza lokalną
         local_srv.DISCONNECT();
-        System.out.println("Zmienna dest_srv--->");
+        System.out.println("\n<--Zmienna dest_srv-->");
         //Klasa danych serwera docelowego
         DB dest_srv = new DB();
         //Pobieranie konfiguracji serwera docelowego
@@ -646,6 +651,9 @@ public class bomisoft_version {
             if (local_srv.ID != 0) {
                 //Wysłanie raportu do serwera docelowego
                 dest_srv.SEND_RAPORT(local_srv);
+            }
+            else {
+                System.out.println("Brak danych do wysłania!!");
             }
         }
         //Rozłaczenie się z serwerem docelowym
