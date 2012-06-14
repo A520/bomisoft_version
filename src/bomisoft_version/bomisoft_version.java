@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012061406;
+    public static int VERSION = 2012061407;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -217,7 +217,15 @@ class GlobalDataStore {
                 System.out.println("\nAKTUALIZACJA ZAKONCZONA\n");
                 Runtime load = Runtime.getRuntime();
                 if(new File(command).exists())
-                    load.exec(command);
+                {
+                    if(System.getProperty("os.name").toLowerCase().contains("linux"))
+                    {
+                        load.exec("chmod +x "+command);
+                        load.exec(command);
+                    }
+                    else
+                        load.exec(command);
+                }
                 System.exit(0);
             }
 
