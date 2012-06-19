@@ -544,22 +544,15 @@ class DB {
                     + "PRIMARY KEY (`ID`)"
                     + ") ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;");
             ResultSet executeQuery = this.conn.createStatement().executeQuery("SELECT ID FROM serwis WHERE ID_apteki=" + source.ID + ";");
-
-            executeQuery.next();
-            try {
-                tmp = executeQuery.getString(1);
-            } catch (Exception ex) {
-                tmp = null;
-            }
-            if (tmp != null) {
-                Statement Query = this.conn.createStatement();
-                int i = Query.executeUpdate("UPDATE serwis SET `TYP`='" + source.TYP + "', "
+            Statement Query = this.conn.createStatement();
+                int i;
+            if(executeQuery.next()){
+                i = Query.executeUpdate("UPDATE serwis SET `TYP`='" + source.TYP + "', "
                         + "`BLOZ`='" + source.BLOZ + "', `VERS`='" + source.AKT + "', "
                         + "`REC`='" + source.REC + "', `RAPORT`='" + source.RAP + "', "
                         + "`AKTUALIZACJA`=now() WHERE ID_apteki=" + source.ID + ";");
                 System.out.println("Aktualizacja rekordu apteki:" + source.ID);
-            } else {
-                Statement Query = this.conn.createStatement();
+            }else{
                 Query.executeUpdate("INSERT INTO serwis (`ID_apteki`, `TYP`, "
                         + "`BLOZ`, `VERS`, `REC`, `RAPORT`) VALUES ('" + source.ID + "', "
                         + "'" + source.TYP + "','" + source.BLOZ + "','" + source.AKT + "',"
