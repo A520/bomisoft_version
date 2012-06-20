@@ -556,7 +556,7 @@ class DB {
                 Query.executeUpdate("INSERT INTO serwis (`ID_apteki`, `TYP`, "
                         + "`BLOZ`, `VERS`, `REC`, `RAPORT`) VALUES ('" + source.ID + "', "
                         + "'" + source.TYP + "','" + source.BLOZ + "','" + source.AKT + "',"
-                        + "'" + source.REC + "'" + "'" + source.RAP + "');");
+                        + "'" + source.REC + "','" + source.RAP + "');");
                 System.out.println("Dodanie rekordu apteki:" + source.ID);
             }
         } catch (SQLException ex) {
