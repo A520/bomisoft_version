@@ -208,11 +208,11 @@ class GlobalDataStore {
                     ioe.printStackTrace();
                 }
                 String command;
-                command = GlobalDataStore.jarDir + "/";
+                command = GlobalDataStore.jarDir;
                 if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-                        command += "bomi.bat";
+                        command += "\\bomi.bat";
                 } else {
-                    command += "bomi.sh";
+                    command += "/bomi.sh";
                 }
                 System.out.println("\nAKTUALIZACJA ZAKONCZONA\n");
                 Runtime load = Runtime.getRuntime();
@@ -226,6 +226,8 @@ class GlobalDataStore {
                     else
                         load.exec(command);
                 }
+                if(GlobalDataStore.DEBUG==true)
+                    System.out.println(command);
                 System.exit(0);
             }
 
