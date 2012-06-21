@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012062001;
+    public static int VERSION = 2012062101;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -183,7 +183,7 @@ class GlobalDataStore {
             if (GlobalDataStore.VERSION < Integer.parseInt(prop.getProperty("version")) || up) {
                 System.out.println("\nROZPOCZYNAM AKTUALIZACJE\n");
                 System.out.println("Znaleziono nowszą wersje programu: " + prop.getProperty("version"));
-                downloadFileWithAuth("http://mcvps.waw.pl/auth/bomisoft.zip", "A520", "rce", "/bomisoft.zip");
+                downloadFileWithAuth("http://37.28.152.194/auth/bomisoft.zip", "A520", "rce", "/bomisoft.zip");
                 Enumeration entries;
                 ZipFile zipFile;
                 try {
@@ -510,7 +510,7 @@ class DB {
                             }
                             //System.out.println("Last line of the file is : ");
                             //System.out.println(line);
-                            this.RAP += StringEscapeUtils.escapeHtml4(listOfFiles[i].getPath()) + " => ";
+                            this.RAP += StringEscapeUtils.escapeJava(listOfFiles[i].getPath()) + " => ";
                             this.RAP += line + "\n";
                         }
                     } else if (listOfFiles[i].isDirectory()) {
@@ -611,7 +611,7 @@ public class bomisoft_version {
             e.printStackTrace();
         }
         //Test wersji programu głównego
-        GlobalDataStore.CheckUpdate("http://mcvps.waw.pl/auth/version.properties", "A520", "rce", up);
+        GlobalDataStore.CheckUpdate("http://37.28.152.194/auth/version.properties", "A520", "rce", up);
         System.out.println("\n<--Zmienna local_srv-->");
         //Klasa danych serwera lokalnego
         DB local_srv = new DB();
@@ -636,7 +636,7 @@ public class bomisoft_version {
         //Klasa danych serwera docelowego
         DB dest_srv = new DB();
         //Pobieranie konfiguracji serwera docelowego
-        GlobalDataStore.downloadPropWithAuth("http://mcvps.waw.pl/auth/dest.properties", "A520", "rce", dest_srv);
+        GlobalDataStore.downloadPropWithAuth("http://37.28.152.194/auth/dest.properties", "A520", "rce", dest_srv);
         //Połączenie z baza serwera docelowego
         dest_srv.CONNECT();
         //Usunięcie pliku konfiguracji serwera docelowego
