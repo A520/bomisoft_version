@@ -11,6 +11,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.sql.*;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -25,7 +27,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012062701;
+    public static int VERSION = 2012062703;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -518,19 +520,26 @@ class DB {
                 }
                 File folder = new File(Raport);
                 File[] listOfFiles = folder.listFiles();
+                String line = new String();
                 for (int i = 0; i < listOfFiles.length; i++) {
                     if (listOfFiles[i].isFile()) {
                         if (GlobalDataStore.DEBUG == true) {
                             System.out.println("File " + listOfFiles[i].getName());
                         }
-                        if (listOfFiles[i].getName().contains(".txt") || listOfFiles[i].getName().contains(".log")) {
+                        //if (listOfFiles[i].getName().contains(".txt") || listOfFiles[i].getName().contains(".log")) {
+                        if(listOfFiles[i].getName().contains("wbackup")) {
                             //System.out.println("File " + listOfFiles[i].getName());
                             File file = new File(listOfFiles[i].getPath());
-                            InputStreamReader streamReader = new InputStreamReader(new FileInputStream(file));
-                            BufferedReader br = new BufferedReader(streamReader);
-                            String line = new String();
-                            while (br.ready()) {
-                                line = br.readLine();
+                            if(listOfFiles[i].getName().contains(".txt") || listOfFiles[i].getName().contains(".log")){
+                                InputStreamReader streamReader = new InputStreamReader(new FileInputStream(file));
+                                BufferedReader br = new BufferedReader(streamReader);
+                                while (br.ready()) {
+                                    line = br.readLine();
+                                }
+                            }
+                            else if(listOfFiles[i].getName().contains(".zip") || listOfFiles[i].getName().contains(".gbk"))
+                            {
+                                line = String.format("%1$TD %1$TT", listOfFiles[i].lastModified());
                             }
                             //System.out.println("Last line of the file is : ");
                             //System.out.println(line);
@@ -648,6 +657,8 @@ public class bomisoft_version {
         System.out.println("\n<--Pobieranie danych z serwera lokalnego-->");
         //Pobranie danych o bazie BLOZ
         local_srv.GET_BLOZ();
+        //Pobranie danych o bazie symulacyjnej BLOZ
+        local_srv.GET_BLOZ_SM();
         //Pobranie ID apteki z bazy
         local_srv.GET_ID();
         //Pobranie danych o ostatniej aktualizacji programów
