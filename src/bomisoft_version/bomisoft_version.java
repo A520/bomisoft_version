@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012062101;
+    public static int VERSION = 2012062701;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -247,9 +247,11 @@ class DB {
     protected String PASS;
     private String DIR;
     public String BLOZ;
+    public String BLSM;
     public String AKT;
     public String RAP = "";
-    public String REC = "";
+    public String REC_MOD = "";
+    public String REC_BAZ = "";
     public Connection conn;
     public int ID;
 
@@ -413,6 +415,27 @@ class DB {
         }
     }
 
+    public void GET_BLOZ_SM() {
+        try {
+            String tmp;
+            if (this.conn != null) {
+                ResultSet executeQuery = this.conn.createStatement().executeQuery("SELECT max(datam) FROM blsm WHERE id>0");
+                executeQuery.next();
+                tmp = executeQuery.getString(1);
+                this.BLSM = tmp;
+                System.out.println("Bloz smymulacyjny: " + tmp);
+            }
+        } catch (SQLException ex) {
+            if (GlobalDataStore.DEBUG == true) {
+                Logger.getLogger(DB.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getErrorCode());
+            }
+        } catch (Exception ex) {
+            if (GlobalDataStore.DEBUG == true) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    
     public void GET_ID() {
         try {
             int tmp;
@@ -461,10 +484,11 @@ class DB {
             if (this.conn != null) {
                 ResultSet executeQuery = this.conn.createStatement().executeQuery("SELECT max(DATAK), max(DGAKT) FROM RSNG");
                 executeQuery.next();
-                tmp += executeQuery.getString(1) + "; Pobrane: ";
-                tmp += executeQuery.getString(2);
+                this.REC_BAZ = executeQuery.getString(1);
+                tmp += this.REC_BAZ + "\nPobrane: ";
+                this.REC_MOD = executeQuery.getString(2);
+                tmp += this.REC_MOD;
                 System.out.println(tmp);
-                this.REC = tmp;
             }
 
         } catch (SQLException ex) {
@@ -539,6 +563,7 @@ class DB {
                     + "`ID_apteki` int(11) NOT NULL COMMENT 'Identyfikator apteki',"
                     + "`TYP` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Typ bazy u klienta', "
                     + "`BLOZ` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Aktualizacja bazy BLOZ',"
+                    + "`BLSM` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Wersja symulacyjnej bazy BLOZ',"
                     + "`VERS` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Ostatnia aktualizacja programów',"
                     + "`REC` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Data aktualizacji skradzionych recept',"
                     + "`RAPORT` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Spis raportów backapu',"
@@ -550,15 +575,16 @@ class DB {
                 int i;
             if(executeQuery.next()){
                 i = Query.executeUpdate("UPDATE serwis SET `TYP`='" + source.TYP + "', "
-                        + "`BLOZ`='" + source.BLOZ + "', `VERS`='" + source.AKT + "', "
-                        + "`REC`='" + source.REC + "', `RAPORT`='" + source.RAP + "', "
+                        + "`BLOZ`='" + source.BLOZ + "', `BLSM`='" + source.BLSM + "', "
+                        + "`VERS`='" + source.AKT + "', `REC`='" + source.REC_BAZ + "', "
+                        + "`RAPORT`='" + source.RAP + "', "
                         + "`AKTUALIZACJA`=now() WHERE ID_apteki=" + source.ID + ";");
                 System.out.println("Aktualizacja rekordu apteki:" + source.ID);
             }else{
                 Query.executeUpdate("INSERT INTO serwis (`ID_apteki`, `TYP`, "
-                        + "`BLOZ`, `VERS`, `REC`, `RAPORT`) VALUES ('" + source.ID + "', "
-                        + "'" + source.TYP + "','" + source.BLOZ + "','" + source.AKT + "',"
-                        + "'" + source.REC + "','" + source.RAP + "');");
+                        + "`BLOZ`, `BLSM`, `VERS`, `REC`, `RAPORT`) VALUES ('" + source.ID + "', "
+                        + "'" + source.TYP + "','" + source.BLOZ + "', '" + source.BLSM + "', "
+                        + "'" + source.AKT + "', '" + source.REC_BAZ + "','" + source.RAP + "');");
                 System.out.println("Dodanie rekordu apteki:" + source.ID);
             }
         } catch (SQLException ex) {
