@@ -11,6 +11,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -25,7 +28,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012062804;
+    public static int VERSION = 2012062806;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -576,7 +579,7 @@ class DB {
                             System.out.println("File " + listOfFiles[i].getName());
                         }
                         //if (listOfFiles[i].getName().contains(".txt") || listOfFiles[i].getName().contains(".log")) {
-                        if(listOfFiles[i].getName().contains("wbackup")) {
+                        if(listOfFiles[i].getName().contains("wbackup") || listOfFiles[i].getName().contains(".bz2") || listOfFiles[i].getName().contains(".7z")) {
                             //System.out.println("File " + listOfFiles[i].getName());
                             File file = new File(listOfFiles[i].getPath());
                             if(listOfFiles[i].getName().contains(".txt") || listOfFiles[i].getName().contains(".log")){
@@ -588,9 +591,12 @@ class DB {
                             }
                             else if(listOfFiles[i].getName().contains(".zip") || listOfFiles[i].getName().contains(".gbk") || listOfFiles[i].getName().contains(".bz2") || listOfFiles[i].getName().contains(".7z"))
                             {
-                                line = "Ostatnia modyfikacja: " + String.format("%1$TF %1$TT", listOfFiles[i].lastModified()) +
-                                " Wielkość: " + GlobalDataStore.humanReadableByteCount(listOfFiles[i].length(), false);
-                                
+                                Calendar cal = Calendar.getInstance();  
+                                cal.add(Calendar.DAY_OF_MONTH, -8);  
+                                long purgeTime = cal.getTimeInMillis(); 
+                                if(listOfFiles[i].lastModified() > purgeTime)
+                                    line = "Ostatnia modyfikacja: " + String.format("%1$TF %1$TT", listOfFiles[i].lastModified()) +
+                                    " Wielkość: " + GlobalDataStore.humanReadableByteCount(listOfFiles[i].length(), false);
                             }
                             //System.out.println("Last line of the file is : ");
                             //System.out.println(line);
