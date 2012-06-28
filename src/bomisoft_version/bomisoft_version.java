@@ -17,50 +17,32 @@ public class bomisoft_version {
         GlobalDataStore.GlobalDataUpdate();
         //Ustawienie zmiennej wymuszonej aktualizacji na "false"
         Boolean up = false;
+        Boolean gui = true;
+        String ABOUT = "\nAutor: \t Marek Opłotny \n"
+                + "-nogui \t\t uruchomienie programu w trybie teksotwym \n"
+                + "-upgrade \t pobranie aktualnej wersji programu z serwera";
         //Pozyskanie parametru pierwszego i ustawienie zmiennej wymuszanej aktualizacji na true
-        try {
-            if (args.length > 0) {
-                //System.out.println("Args " + args[0]);
-                if (args[0].matches("upgrade")) {
-                    up = true;
-                    if (GlobalDataStore.DEBUG == true)
-                        System.out.println("Ustawiam wymuszona aktualizacje!!");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         //Test wersji programu głównego
+        if(args.length>0)
+        {
+            if(args[0].matches("help")){
+                System.out.println(ABOUT);
+                System.exit(0);
+            }
+            else
+            for (int i=0; i < args.length; i++){
+                if(args[i].toString().matches("-upgrade"))
+                    up=true;
+                if(args[i].matches("-nogui"))
+                    gui=false;
+            }
+        }
         GlobalDataStore.CheckUpdate("http://37.28.152.194/auth/version.properties", "A520", "rce", up);
-        System.out.println("\n<--Zmienna local_srv-->");
-        //Klasa danych serwera lokalnego
-        DB local_srv = new DB();
-        //Wczytanie danych serwera lokalnego
-        local_srv.PROP("/db.properties");
-        //Połaczenie z serwerem lokalnym
-        local_srv.CONNECT();
-        System.out.println("\n<--Pobieranie danych z serwera lokalnego-->");
-        //Pobranie danych o bazie BLOZ
-        local_srv.GET_BLOZ();
-        //Pobranie danych o bazie symulacyjnej BLOZ
-        local_srv.GET_BLOZ_SM();
-        //Pobranie ID apteki z bazy
-        local_srv.GET_ID();
-        //Pobranie danych o ostatniej aktualizacji programów
-        local_srv.GET_AKT();
-        //Pobranie danych o ostatniej aktualizacji recept skradzionych
-        local_srv.GET_REC();
-        //Pozyskanie z plików danych o backupach
-        local_srv.GET_RAPORT();
-        //Rozłączenie z baza lokalną
-        local_srv.DISCONNECT();
-        System.out.println("\n<--Zmienna dest_srv-->");
-        //Klasa danych serwera docelowego
-        DB dest_srv = new DB();
-        //Pobieranie konfiguracji serwera docelowego
-        GlobalDataStore.downloadPropWithAuth("http://37.28.152.194/auth/dest.properties", "A520", "rce", dest_srv);
-        //Połączenie z baza serwera docelowego
-        dest_srv.CONNECT();
+        if(gui){
+            Podglad okno;
+            okno = new Podglad();
+            okno.setVisible(true);
+        }
         //Usunięcie pliku konfiguracji serwera docelowego
         File files = new File("dest.properties");
         if (files.exists()) {
@@ -71,17 +53,5 @@ public class bomisoft_version {
         if (files.exists()) {
             files.delete();
         }
-        //Test poprawności połączenia z baza docelową
-        if (local_srv.conn != null) {
-            if (local_srv.ID != 0) {
-                //Wysłanie raportu do serwera docelowego
-                dest_srv.SEND_RAPORT(local_srv);
-            }
-            else {
-                System.out.println("Brak danych do wysłania!!");
-            }
-        }
-        //Rozłaczenie się z serwerem docelowym
-        dest_srv.DISCONNECT();
     }
 }

@@ -178,7 +178,7 @@ class GlobalDataStore {
             Properties prop = new Properties();
             prop.load(new FileInputStream("version.properties"));
             String osName = System.getProperty("os.name");
-            System.out.println("Operating system name => " + osName);
+            System.out.println("Nazwa systemu operacyjnego => " + osName);
             System.out.println("Aktualna wersja programu: " + GlobalDataStore.VERSION);
             if (GlobalDataStore.VERSION < Integer.parseInt(prop.getProperty("version")) || up) {
                 System.out.println("\nROZPOCZYNAM AKTUALIZACJE\n");
@@ -242,6 +242,50 @@ class GlobalDataStore {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+    
+    public static void NoGUI(){
+        System.out.println("\n<--Zmienna local_srv-->");
+        //Klasa danych serwera lokalnego
+        DB local_srv = new DB();
+        //Wczytanie danych serwera lokalnego
+        local_srv.PROP("/db.properties");
+        //Połaczenie z serwerem lokalnym
+        local_srv.CONNECT();
+        System.out.println("\n<--Pobieranie danych z serwera lokalnego-->");
+        //Pobranie danych o bazie BLOZ
+        local_srv.GET_BLOZ();
+        //Pobranie danych o bazie symulacyjnej BLOZ
+        local_srv.GET_BLOZ_SM();
+        //Pobranie ID apteki z bazy
+        local_srv.GET_ID();
+        //Pobranie danych o ostatniej aktualizacji programów
+        local_srv.GET_AKT();
+        //Pobranie danych o ostatniej aktualizacji recept skradzionych
+        local_srv.GET_REC();
+        //Pozyskanie z plików danych o backupach
+        local_srv.GET_RAPORT();
+        //Rozłączenie z baza lokalną
+        local_srv.DISCONNECT();
+        System.out.println("\n<--Zmienna dest_srv-->");
+        //Klasa danych serwera docelowego
+        DB dest_srv = new DB();
+        //Pobieranie konfiguracji serwera docelowego
+        GlobalDataStore.downloadPropWithAuth("http://37.28.152.194/auth/dest.properties", "A520", "rce", dest_srv);
+        //Połączenie z baza serwera docelowego
+        dest_srv.CONNECT();
+        //Test poprawności połączenia z baza docelową
+        if (local_srv.conn != null) {
+            if (local_srv.ID != 0) {
+                //Wysłanie raportu do serwera docelowego
+                dest_srv.SEND_RAPORT(local_srv);
+            }
+            else {
+                System.out.println("Brak danych do wysłania!!");
+            }
+        }
+        //Rozłaczenie się z serwerem docelowym
+        dest_srv.DISCONNECT();
     }
 }
 class DB {
