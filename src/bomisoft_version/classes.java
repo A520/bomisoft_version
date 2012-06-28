@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012062808;
+    public static int VERSION = 2012062810;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;

@@ -4,12 +4,18 @@
  */
 package bomisoft_version;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author user
  */
 public class Podglad extends javax.swing.JFrame {
 
+   /**
+    * Wywołuje pełną aktualizacje danych na podstawie wskazanego obiektu DB
+    * @param cel wskazany obiekt DB
+    */
    public void Aktualizacja(DB cel){
        ID(cel);
        BLOZ(cel);
@@ -18,14 +24,26 @@ public class Podglad extends javax.swing.JFrame {
        REC(cel);
        RAP(cel);
    } 
+   /**
+    * Wprowadzenie do pola ID danych z obiektu DB
+    * @param cel wskazany obiekt DB
+    */
    public void ID(DB cel){
        cel.GET_ID();
        this.ID_a.setText(Integer.toString(cel.ID));
    }
+   /**
+    * Wprowadzenie do pola BLOZ danych z obiektu DB
+    * @param cel wskazany obiekt DB
+    */
    public void BLOZ(DB cel){
        cel.GET_BLOZ();
        this.BLOZ.setText(cel.BLOZ);
    }
+   /**
+    * Wprowadzenie do pola ID danych z obiektu DB
+    * @param cel wskazany obiekt DB
+    */
    public void BLSM(DB cel){
        cel.GET_BLOZ_SM();
        this.BLSM.setText(cel.BLSM);
@@ -52,7 +70,6 @@ public class Podglad extends javax.swing.JFrame {
         local_srv.CONNECT();
         Aktualizacja(local_srv);
         local_srv.DISCONNECT();
-        
     }
     public void Odswiez(){
         DB local_srv = new DB();
@@ -213,7 +230,7 @@ public class Podglad extends javax.swing.JFrame {
             .addGap(0, 400, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("tab2", jPanel4);
+        jTabbedPane1.addTab("Konfiguracja", jPanel4);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -226,7 +243,7 @@ public class Podglad extends javax.swing.JFrame {
             .addGap(0, 400, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("tab3", jPanel5);
+        jTabbedPane1.addTab("Kontakt", jPanel5);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
