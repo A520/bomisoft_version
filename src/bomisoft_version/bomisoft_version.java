@@ -19,13 +19,14 @@ public class bomisoft_version {
         Boolean up = false;
         Boolean gui = false;
         String ABOUT = "\nAutor: \t Marek Opłotny \n"
+                + "Kontakt: oplotny.marek@gmail.com \n"
                 + "-gui \t\t uruchomienie programu w trybie graficznym \n"
                 + "-upgrade \t pobranie aktualnej wersji programu z serwera";
         //Pozyskanie parametru pierwszego i ustawienie zmiennej wymuszanej aktualizacji na true
         //Test wersji programu głównego
         if(args.length>0)
         {
-            if(args[0].matches("help")){
+            if(args[0].toLowerCase().matches("help")){
                 System.out.println(ABOUT);
                 System.exit(0);
             }
@@ -35,6 +36,12 @@ public class bomisoft_version {
                     up=true;
                 if(args[i].matches("-gui"))
                     gui=true;
+                if(!args[i].matches("-gui") && !args[i].matches("-upgrade"))
+                {
+                    System.out.println("\nArgument \"" + args[i] + "\" jest niezdefiniowany!!");
+                    System.out.println(ABOUT);
+                    System.exit(0);
+                }
             }
         }
         GlobalDataStore.CheckUpdate("http://37.28.152.194/auth/version.properties", "A520", "rce", up);

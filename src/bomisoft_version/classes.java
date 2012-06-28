@@ -11,8 +11,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -28,7 +26,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012062806;
+    public static int VERSION = 2012062808;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -588,20 +586,25 @@ class DB {
                                 while (br.ready()) {
                                     line = br.readLine();
                                 }
+                                this.RAP += StringEscapeUtils.escapeJava(listOfFiles[i].getPath()) + " => ";
+                                this.RAP += line + "\n";
                             }
                             else if(listOfFiles[i].getName().contains(".zip") || listOfFiles[i].getName().contains(".gbk") || listOfFiles[i].getName().contains(".bz2") || listOfFiles[i].getName().contains(".7z"))
                             {
                                 Calendar cal = Calendar.getInstance();  
                                 cal.add(Calendar.DAY_OF_MONTH, -8);  
                                 long purgeTime = cal.getTimeInMillis(); 
-                                if(listOfFiles[i].lastModified() > purgeTime)
+                                if(listOfFiles[i].lastModified() > purgeTime){
                                     line = "Ostatnia modyfikacja: " + String.format("%1$TF %1$TT", listOfFiles[i].lastModified()) +
                                     " Wielkość: " + GlobalDataStore.humanReadableByteCount(listOfFiles[i].length(), false);
+                                    this.RAP += StringEscapeUtils.escapeJava(listOfFiles[i].getPath()) + " => ";
+                                    this.RAP += line + "\r\n";
+                                }
                             }
                             //System.out.println("Last line of the file is : ");
                             //System.out.println(line);
-                            this.RAP += StringEscapeUtils.escapeJava(listOfFiles[i].getPath()) + " => ";
-                            this.RAP += line + "\n";
+                            //this.RAP += StringEscapeUtils.escapeJava(listOfFiles[i].getPath()) + " => ";
+                            //this.RAP += line + "\n";
                         }
                     } else if (listOfFiles[i].isDirectory()) {
                         if(GlobalDataStore.DEBUG==true)
