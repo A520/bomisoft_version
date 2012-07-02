@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012062810;
+    public static int VERSION = 2012070101;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -60,7 +60,7 @@ class GlobalDataStore {
         }
         try {
             File f = new File(bomisoft_version.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            System.out.println("Exec path: " + f.getParent());
+            System.out.println("Ścieżka wywołania: " + f.getParent());
             jarDir = f.getParent();
         } catch (URISyntaxException ex) {
             Logger.getLogger(GlobalDataStore.class.getName()).log(Level.SEVERE, null, ex);
@@ -149,7 +149,9 @@ class GlobalDataStore {
             Properties prop = new Properties();
             prop.load(new FileInputStream("dest.properties"));
             outProp.PROP(prop);
-            file.delete();
+            if (file.exists()) {
+                file.delete();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -243,50 +245,6 @@ class GlobalDataStore {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-    }
-    
-    public static void NoGUI(){
-        System.out.println("\n<--Zmienna local_srv-->");
-        //Klasa danych serwera lokalnego
-        DB local_srv = new DB();
-        //Wczytanie danych serwera lokalnego
-        local_srv.PROP("/db.properties");
-        //Połaczenie z serwerem lokalnym
-        local_srv.CONNECT();
-        System.out.println("\n<--Pobieranie danych z serwera lokalnego-->");
-        //Pobranie danych o bazie BLOZ
-        local_srv.GET_BLOZ();
-        //Pobranie danych o bazie symulacyjnej BLOZ
-        local_srv.GET_BLOZ_SM();
-        //Pobranie ID apteki z bazy
-        local_srv.GET_ID();
-        //Pobranie danych o ostatniej aktualizacji programów
-        local_srv.GET_AKT();
-        //Pobranie danych o ostatniej aktualizacji recept skradzionych
-        local_srv.GET_REC();
-        //Pozyskanie z plików danych o backupach
-        local_srv.GET_RAPORT();
-        //Rozłączenie z baza lokalną
-        local_srv.DISCONNECT();
-        System.out.println("\n<--Zmienna dest_srv-->");
-        //Klasa danych serwera docelowego
-        DB dest_srv = new DB();
-        //Pobieranie konfiguracji serwera docelowego
-        GlobalDataStore.downloadPropWithAuth("http://37.28.152.194/auth/dest.properties", "A520", "rce", dest_srv);
-        //Połączenie z baza serwera docelowego
-        dest_srv.CONNECT();
-        //Test poprawności połączenia z baza docelową
-        if (local_srv.conn != null) {
-            if (local_srv.ID != 0) {
-                //Wysłanie raportu do serwera docelowego
-                dest_srv.SEND_RAPORT(local_srv);
-            }
-            else {
-                System.out.println("Brak danych do wysłania!!");
-            }
-        }
-        //Rozłaczenie się z serwerem docelowym
-        dest_srv.DISCONNECT();
     }
 }
 class DB {
@@ -577,7 +535,9 @@ class DB {
                             System.out.println("File " + listOfFiles[i].getName());
                         }
                         //if (listOfFiles[i].getName().contains(".txt") || listOfFiles[i].getName().contains(".log")) {
-                        if(listOfFiles[i].getName().contains("wbackup") || listOfFiles[i].getName().contains(".bz2") || listOfFiles[i].getName().contains(".7z")) {
+                        if(listOfFiles[i].getName().contains("wbackup") || listOfFiles[i].getName().contains(".bz2") ||
+                                listOfFiles[i].getName().contains(".7z") || listOfFiles[i].getName().contains(".dmp") ||
+                                listOfFiles[i].getName().contains(".zip") || listOfFiles[i].getName().contains(".fdb") ) {
                             //System.out.println("File " + listOfFiles[i].getName());
                             File file = new File(listOfFiles[i].getPath());
                             if(listOfFiles[i].getName().contains(".txt") || listOfFiles[i].getName().contains(".log")){
@@ -589,7 +549,9 @@ class DB {
                                 this.RAP += StringEscapeUtils.escapeJava(listOfFiles[i].getPath()) + " => ";
                                 this.RAP += line + "\n";
                             }
-                            else if(listOfFiles[i].getName().contains(".zip") || listOfFiles[i].getName().contains(".gbk") || listOfFiles[i].getName().contains(".bz2") || listOfFiles[i].getName().contains(".7z"))
+                            else if(listOfFiles[i].getName().contains(".zip") || listOfFiles[i].getName().contains(".gbk") ||
+                                    listOfFiles[i].getName().contains(".bz2") || listOfFiles[i].getName().contains(".7z") ||
+                                    listOfFiles[i].getName().contains(".fdb") )
                             {
                                 Calendar cal = Calendar.getInstance();  
                                 cal.add(Calendar.DAY_OF_MONTH, -8);  
