@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012070101;
+    public static int VERSION = 2012081301;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -339,7 +339,11 @@ class DB {
                 try {
                     DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
                     DriverManager.setLoginTimeout(GlobalDataStore.timeout);
-                    String db_connect_string = "jdbc:oracle:thin:@" + this.HOST + ":" + this.PORT + ":" + this.SCHEM;
+                    String db_connect_string = "jdbc:oracle:oci8:@";
+                    if(!"127.0.0.1".equals(this.HOST.toString()))
+                    {
+                        db_connect_string = "jdbc:oracle:thin:@" + this.HOST + ":" + this.PORT + ":" + this.SCHEM;
+                    }
                     this.conn = DriverManager.getConnection(db_connect_string, this.USER, this.PASS);
                     System.out.println("Connected to: " + this.TYP);
 
