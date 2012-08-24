@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012081302;
+    public static int VERSION = 2012082401;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -34,7 +34,7 @@ class GlobalDataStore {
 
     public static void copyInputStream(InputStream in, OutputStream out)
             throws IOException {
-        byte[] buffer = new byte[10240];
+        byte[] buffer = new byte[4096];
         int len;
         while ((len = in.read(buffer)) >= 0) {
             out.write(buffer, 0, len);
@@ -93,8 +93,8 @@ class GlobalDataStore {
             //if(GlobalDataStore.DEBUG==true)
             //ex.printStackTrace();
             System.out.println("Ustawienia domyślne");
-            DEBUG = false;
-            System.out.println("Debug ustawione na: false");
+            DEBUG = true;
+            System.out.println("Debug ustawione na: true");
             timeout = 2;
             System.out.println("Timeout ustawione na: 2 sekundy");
             //jarDir = bomisoft_version.class.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -644,5 +644,25 @@ class DB {
                 ex.printStackTrace();
             }
         }
+    }
+    
+    public String SHOW_HOST() {
+        return this.HOST;
+    }
+    
+    public String SHOW_PORT() {
+        return this.PORT;
+    }
+    
+    public String SHOW_SCHEM() {
+        return this.SCHEM;
+    }
+    
+    public String SHOW_USER() {
+        return this.USER;
+    }
+    
+    public String SHOW_DIR() {
+        return this.DIR;
     }
 }
