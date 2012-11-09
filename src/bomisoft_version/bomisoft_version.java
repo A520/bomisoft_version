@@ -47,6 +47,7 @@ public class bomisoft_version {
         }
         GlobalDataStore.CheckUpdate("http://37.28.152.194/auth/version.properties", "A520", "rce", up);
         if(gui){
+            GlobalDataStore.IfGUI=true;
             Podglad okno;
             okno = new Podglad();
             okno.setVisible(true);

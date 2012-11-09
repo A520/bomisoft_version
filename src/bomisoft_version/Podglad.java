@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -85,7 +86,7 @@ public class Podglad extends javax.swing.JFrame {
     public void KonfLoad(){
         DB local_srv = new DB();
         local_srv.PROP(GlobalDataStore.jarDir + "/db.properties");
-        local_srv.CONNECT();
+        //local_srv.CONNECT();
         if("oracle".equals(local_srv.TYP.toLowerCase()))
             TYPY.setSelectedIndex(0);
         else
@@ -96,7 +97,7 @@ public class Podglad extends javax.swing.JFrame {
         USERY.setText(local_srv.SHOW_USER());
         PASSY.setText("****");
         KATALOGI.setText(local_srv.SHOW_DIR());
-        local_srv.DISCONNECT();
+        //local_srv.DISCONNECT();
     }
 
     public void KonfSave(){
@@ -117,10 +118,18 @@ public class Podglad extends javax.swing.JFrame {
                 prop.setProperty("dir", KATALOGI.getText());
  
     		//save properties to project root folder
-                if(!PASSY.equals("**"))
-                    System.out.println("Musisz podac hasło");
+                if(PASSY.equals("**"))
+                {
+                    System.out.println("Musisz podac hasło!!");
+                    if(GlobalDataStore.IfGUI)
+                        JOptionPane.showMessageDialog(null, "Musisz podac hasło!!");
+                }
                 else
+                {
                     prop.store(new FileOutputStream(GlobalDataStore.jarDir + "/db.properties"), null);
+                    if(GlobalDataStore.IfGUI)
+                        JOptionPane.showMessageDialog(null, "Zapisano ustawienia");
+                }
  
     	} catch (IOException ex) {
     		ex.printStackTrace();
@@ -538,6 +547,7 @@ public class Podglad extends javax.swing.JFrame {
                     dest_srv.SEND_RAPORT(local_srv);
                 }
                 else {
+                    JOptionPane.showMessageDialog(null, "Brak danych do wysłania!!");
                     //System.out.println("Brak danych do wysłania!!");
                 }
             }

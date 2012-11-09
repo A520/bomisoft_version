@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.swing.JOptionPane;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
@@ -26,11 +27,12 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012110802;
+    public static int VERSION = 2012110803;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
     public static String jarDir;
+    public static Boolean IfGUI=false;
 
     public static void copyInputStream(InputStream in, OutputStream out)
             throws IOException {
@@ -400,6 +402,8 @@ class DB {
             }
             default: {
                 System.out.println("Podany typ bazy jest nie obsługiwany.\n Wybierz Oracle/MySQL/FireBird");
+                if(GlobalDataStore.IfGUI)
+                        JOptionPane.showMessageDialog(null, "Podany typ bazy jest nie obsługiwany.\n Wybierz Oracle/MySQL/FireBird");
             }
         }
     }
@@ -611,12 +615,16 @@ class DB {
                         + "`RAPORT`='" + source.RAP + "', "
                         + "`AKTUALIZACJA`=now() WHERE ID_apteki=" + source.ID + ";");
                 System.out.println("Aktualizacja rekordu apteki:" + source.ID);
+                if(GlobalDataStore.IfGUI)
+                    JOptionPane.showMessageDialog(null, "Aktualizacja rekordu apteki: " + source.ID);
             }else{
                 Query.executeUpdate("INSERT INTO serwis (`ID_apteki`, `TYP`, "
                         + "`BLOZ`, `BLSM`, `VERS`, `REC`, `RAPORT`) VALUES ('" + source.ID + "', "
                         + "'" + source.TYP + "','" + source.BLOZ + "', '" + source.BLSM + "', "
                         + "'" + source.AKT + "', '" + source.REC_BAZ + "','" + source.RAP + "');");
                 System.out.println("Dodanie rekordu apteki:" + source.ID);
+                if(GlobalDataStore.IfGUI)
+                    JOptionPane.showMessageDialog(null, "Dodanie rekordu apteki: " + source.ID);
             }
         } catch (SQLException ex) {
             if (GlobalDataStore.DEBUG == true) {
