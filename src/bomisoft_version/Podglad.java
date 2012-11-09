@@ -4,6 +4,9 @@
  */
 package bomisoft_version;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 import javax.swing.JFrame;
 
 /**
@@ -66,19 +69,63 @@ public class Podglad extends javax.swing.JFrame {
     public Podglad() {
         initComponents();
         DB local_srv = new DB();
-        local_srv.PROP("/db.properties");
+        local_srv.PROP(GlobalDataStore.jarDir + "/db.properties");
         local_srv.CONNECT();
         Aktualizacja(local_srv);
         local_srv.DISCONNECT();
     }
     public void Odswiez(){
         DB local_srv = new DB();
-        local_srv.PROP("/db.properties");
+        local_srv.PROP(GlobalDataStore.jarDir + "/db.properties");
         local_srv.CONNECT();
         Aktualizacja(local_srv);
         local_srv.DISCONNECT();
     }
+    
+    public void KonfLoad(){
+        DB local_srv = new DB();
+        local_srv.PROP(GlobalDataStore.jarDir + "/db.properties");
+        local_srv.CONNECT();
+        if("oracle".equals(local_srv.TYP.toLowerCase()))
+            TYPY.setSelectedIndex(0);
+        else
+            TYPY.setSelectedIndex(1);
+        HOSTY.setText(local_srv.SHOW_HOST());
+        PORTY.setText(local_srv.SHOW_PORT());
+        SCHEMATY.setText(local_srv.SHOW_SCHEM());
+        USERY.setText(local_srv.SHOW_USER());
+        PASSY.setText("****");
+        KATALOGI.setText(local_srv.SHOW_DIR());
+        local_srv.DISCONNECT();
+    }
 
+    public void KonfSave(){
+        Properties prop = new Properties();
+        try {
+    		//set the properties value
+                String tmpTYP;
+                if(TYPY.getSelectedIndex()==0)
+                    tmpTYP = "oracle";
+                else
+                    tmpTYP = "firebird";
+    		prop.setProperty("typ", tmpTYP);
+    		prop.setProperty("host", HOSTY.getText());
+    		prop.setProperty("port", PORTY.getText());
+                prop.setProperty("schem", SCHEMATY.getText());
+                prop.setProperty("user", USERY.getText());
+                prop.setProperty("pass", PASSY.getText());
+                prop.setProperty("dir", KATALOGI.getText());
+ 
+    		//save properties to project root folder
+                if(!PASSY.equals("**"))
+                    System.out.println("Musisz podac hasło");
+                else
+                    prop.store(new FileOutputStream(GlobalDataStore.jarDir + "/db.properties"), null);
+ 
+    	} catch (IOException ex) {
+    		ex.printStackTrace();
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -106,7 +153,25 @@ public class Podglad extends javax.swing.JFrame {
         RAP = new javax.swing.JScrollPane();
         RAP2 = new javax.swing.JTextArea();
         jButton1 = new javax.swing.JButton();
+        WYSLIJ = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        PANELAKT = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        TYPY = new javax.swing.JComboBox();
+        HOSTY = new javax.swing.JTextField();
+        PORTY = new javax.swing.JTextField();
+        SCHEMATY = new javax.swing.JTextField();
+        USERY = new javax.swing.JTextField();
+        KATALOGI = new javax.swing.JTextField();
+        PASSY = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -145,6 +210,13 @@ public class Podglad extends javax.swing.JFrame {
             }
         });
 
+        WYSLIJ.setText("WYSLIJ");
+        WYSLIJ.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                WYSLIJMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -173,7 +245,9 @@ public class Podglad extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(REC)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(WYSLIJ, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
@@ -207,27 +281,162 @@ public class Podglad extends javax.swing.JFrame {
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel5)
                                     .addComponent(REC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                    .addComponent(jButton1))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addGap(7, 7, 7)
+                        .addComponent(WYSLIJ)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
-                        .addGap(0, 250, Short.MAX_VALUE))
+                        .addGap(0, 295, Short.MAX_VALUE))
                     .addComponent(RAP))
                 .addContainerGap())
         );
 
         jTabbedPane1.addTab("Informacje", jPanel3);
 
+        jButton2.setText("Załaduj");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
+
+        jButton3.setText("Aktualizuj");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton3MouseClicked(evt);
+            }
+        });
+
+        jLabel7.setText("TYP");
+
+        jLabel8.setText("HOST");
+
+        jLabel9.setText("PORT");
+
+        jLabel10.setText("SCHEMAT");
+
+        jLabel11.setText("USER");
+
+        jLabel12.setText("PASS");
+
+        jLabel13.setText("KATALOG");
+
+        TYPY.setEditable(true);
+        TYPY.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Oracle", "FireBird" }));
+        TYPY.setToolTipText("");
+        TYPY.setEnabled(false);
+
+        HOSTY.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        HOSTY.setText("127.0.0.1");
+        HOSTY.setEnabled(false);
+
+        PORTY.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        PORTY.setText("1521");
+        PORTY.setEnabled(false);
+
+        SCHEMATY.setText("XE");
+        SCHEMATY.setEnabled(false);
+
+        USERY.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        USERY.setText("apw_user");
+        USERY.setEnabled(false);
+
+        KATALOGI.setText("C:/KS/APW/BACKUP");
+        KATALOGI.setEnabled(false);
+
+        PASSY.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        PASSY.setText("****");
+        PASSY.setEnabled(false);
+
+        javax.swing.GroupLayout PANELAKTLayout = new javax.swing.GroupLayout(PANELAKT);
+        PANELAKT.setLayout(PANELAKTLayout);
+        PANELAKTLayout.setHorizontalGroup(
+            PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PANELAKTLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel12)
+                    .addComponent(jLabel13))
+                .addGap(60, 60, 60)
+                .addGroup(PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(SCHEMATY)
+                    .addComponent(PORTY)
+                    .addComponent(HOSTY)
+                    .addComponent(TYPY, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(USERY)
+                    .addComponent(KATALOGI, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                    .addComponent(PASSY))
+                .addContainerGap(246, Short.MAX_VALUE))
+        );
+        PANELAKTLayout.setVerticalGroup(
+            PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PANELAKTLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addGroup(PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(TYPY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(HOSTY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(PORTY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(SCHEMATY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(USERY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(PASSY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(PANELAKTLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(KATALOGI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(168, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 726, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addComponent(PANELAKT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(jButton2))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)))
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(PANELAKT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Konfiguracja", jPanel4);
@@ -240,7 +449,7 @@ public class Podglad extends javax.swing.JFrame {
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 445, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Kontakt", jPanel5);
@@ -249,7 +458,7 @@ public class Podglad extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 731, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -274,6 +483,66 @@ public class Podglad extends javax.swing.JFrame {
         // TODO add your handling code here:
         Odswiez();
     }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        // TODO add your handling code here:
+        KonfLoad();
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        // TODO add your handling code here:
+        if("Aktualizuj".equals(jButton3.getText()))
+        {
+            TYPY.setEnabled(true);
+            HOSTY.setEnabled(true);
+            PORTY.setEnabled(true);
+            SCHEMATY.setEnabled(true);
+            USERY.setEnabled(true);
+            PASSY.setEnabled(true);
+            KATALOGI.setEnabled(true);
+            jButton3.setText("Zapisz");
+        }
+        else
+        {
+            KonfSave();
+            TYPY.setEnabled(false);
+            HOSTY.setEnabled(false);
+            PORTY.setEnabled(false);
+            SCHEMATY.setEnabled(false);
+            USERY.setEnabled(false);
+            PASSY.setEnabled(false);
+            KATALOGI.setEnabled(false);
+            jButton3.setText("Aktualizuj");
+            KonfLoad();
+        }
+    }//GEN-LAST:event_jButton3MouseClicked
+
+    private void WYSLIJMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_WYSLIJMouseClicked
+        // TODO add your handling code here:
+        DB local_srv = new DB();
+        local_srv.PROP("/db.properties");
+        local_srv.CONNECT();
+        local_srv.GET_BLOZ();
+        local_srv.GET_BLOZ_SM();
+        local_srv.GET_ID();
+        local_srv.GET_AKT();
+        local_srv.GET_REC();
+        local_srv.GET_RAPORT();
+        local_srv.DISCONNECT();
+        DB dest_srv = new DB();
+        GlobalDataStore.downloadPropWithAuth("http://37.28.152.194/auth/dest.properties", "A520", "rce", dest_srv);
+        dest_srv.CONNECT();
+        if (local_srv.conn != null) {
+                if (local_srv.ID != 0) {
+                    //Wysłanie raportu do serwera docelowego
+                    dest_srv.SEND_RAPORT(local_srv);
+                }
+                else {
+                    //System.out.println("Brak danych do wysłania!!");
+                }
+            }
+        dest_srv.DISCONNECT();
+    }//GEN-LAST:event_WYSLIJMouseClicked
 
     /**
      * @param args the command line arguments
@@ -319,18 +588,36 @@ public class Podglad extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField BLOZ;
     private javax.swing.JTextField BLSM;
+    private javax.swing.JTextField HOSTY;
     private javax.swing.JTextField ID_a;
+    private javax.swing.JTextField KATALOGI;
+    private javax.swing.JPanel PANELAKT;
+    private javax.swing.JTextField PASSY;
+    private javax.swing.JTextField PORTY;
     private javax.swing.JScrollPane RAP;
     private javax.swing.JTextArea RAP2;
     private javax.swing.JTextField REC;
+    private javax.swing.JTextField SCHEMATY;
+    private javax.swing.JComboBox TYPY;
+    private javax.swing.JTextField USERY;
     private javax.swing.JTextField VERS;
+    private javax.swing.JButton WYSLIJ;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
