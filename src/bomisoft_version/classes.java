@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012111401;
+    public static int VERSION = 2012111402;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -416,6 +416,13 @@ class DB {
                 ResultSet executeQuery = this.conn.createStatement().executeQuery("SELECT max(datam) FROM bloz WHERE id>0");
                 executeQuery.next();
                 tmp = executeQuery.getString(1);
+                String[] tmp2;
+                if(tmp!=null)
+                {
+                    tmp2 = tmp.split("\\ ");
+                    if(tmp2.length>0)
+                        tmp = tmp2[0];
+                }
                 this.BLOZ = tmp;
                 System.out.println("Bloz: " + tmp);
             }
@@ -437,6 +444,13 @@ class DB {
                 ResultSet executeQuery = this.conn.createStatement().executeQuery("SELECT max(datam) FROM blsm WHERE id>0");
                 executeQuery.next();
                 tmp = executeQuery.getString(1);
+                String[] tmp2;
+                if(tmp!=null)
+                {
+                    tmp2 = tmp.split("\\ ");
+                    if(tmp2.length>0)
+                        tmp = tmp2[0];
+                }
                 this.BLSM = tmp;
                 System.out.println("Bloz smymulacyjny: " + tmp);
             }
@@ -509,6 +523,10 @@ class DB {
                 ResultSet executeQuery = this.conn.createStatement().executeQuery("SELECT max(DATAK), max(DGAKT) FROM RSNG");
                 executeQuery.next();
                 this.REC_BAZ = executeQuery.getString(1);
+                String[] tmp2;
+                tmp2 = this.REC_BAZ.split("\\ ");
+                if(tmp2.length>0)
+                    this.REC_BAZ = tmp2[0];
                 tmp += this.REC_BAZ + "\nPobrane: ";
                 this.REC_MOD = executeQuery.getString(2);
                 tmp += this.REC_MOD;
@@ -609,6 +627,7 @@ class DB {
                     + "`TYP` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Typ bazy u klienta', "
                     + "`BLOZ` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Aktualizacja bazy BLOZ',"
                     + "`BLSM` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Wersja symulacyjnej bazy BLOZ',"
+                    + "`PROG` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Wersja programu',"
                     + "`VERS` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Ostatnia aktualizacja programów',"
                     + "`REC` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Data aktualizacji skradzionych recept',"
                     + "`RAPORT` text COLLATE utf8_polish_ci NOT NULL COMMENT 'Spis raportów backapu',"
@@ -621,17 +640,18 @@ class DB {
             if(executeQuery.next()){
                 i = Query.executeUpdate("UPDATE serwis SET `TYP`='" + source.TYP + "', "
                         + "`BLOZ`='" + source.BLOZ + "', `BLSM`='" + source.BLSM + "', "
-                        + "`VERS`='" + source.AKT + "', `REC`='" + source.REC_BAZ + "', "
-                        + "`RAPORT`='" + source.RAP + "', "
+                        + "`PROG`='" + source.VER + "', `VERS`='" + source.AKT + "', "
+                        + " `REC`='" + source.REC_BAZ + "', `RAPORT`='" + source.RAP + "', "
                         + "`AKTUALIZACJA`=now() WHERE ID_apteki=" + source.ID + ";");
                 System.out.println("Aktualizacja rekordu apteki:" + source.ID);
                 if(GlobalDataStore.IfGUI)
                     JOptionPane.showMessageDialog(null, "Aktualizacja rekordu apteki: " + source.ID);
             }else{
                 Query.executeUpdate("INSERT INTO serwis (`ID_apteki`, `TYP`, "
-                        + "`BLOZ`, `BLSM`, `VERS`, `REC`, `RAPORT`) VALUES ('" + source.ID + "', "
-                        + "'" + source.TYP + "','" + source.BLOZ + "', '" + source.BLSM + "', "
-                        + "'" + source.AKT + "', '" + source.REC_BAZ + "','" + source.RAP + "');");
+                        + "`BLOZ`, `BLSM`, `PROG`, `VERS`, `REC`, `RAPORT`) VALUES ('"
+                        + "" + source.ID + "', '" + source.TYP + "','" + source.BLOZ + "', "
+                        + "'" + source.BLSM + "', '" + source.VER + "', '" + source.AKT + "', "
+                        + "'" + source.REC_BAZ + "', '" + source.RAP + "');");
                 System.out.println("Dodanie rekordu apteki:" + source.ID);
                 if(GlobalDataStore.IfGUI)
                     JOptionPane.showMessageDialog(null, "Dodanie rekordu apteki: " + source.ID);
