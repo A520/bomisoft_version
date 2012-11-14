@@ -119,7 +119,7 @@ public class Podglad extends javax.swing.JFrame {
                 prop.setProperty("dir", KATALOGI.getText());
  
     		//save properties to project root folder
-                if(PASSY.equals("**"))
+                if(PASSY.getText().matches(".*\\*"))
                 {
                     System.out.println("Musisz podac hasło!!");
                     if(GlobalDataStore.IfGUI)
