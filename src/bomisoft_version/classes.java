@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.swing.JOptionPane;
@@ -27,7 +28,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  */
 class GlobalDataStore {
 
-    public static int VERSION = 2012110803;
+    public static int VERSION = 2012111401;
     public static int BUILD = 0;
     public static boolean DEBUG;
     public static int timeout;
@@ -261,6 +262,7 @@ class DB {
     public String BLOZ;
     public String BLSM;
     public String AKT;
+    public String VER;
     public String RAP = "";
     public String REC_MOD = "";
     public String REC_BAZ = "";
@@ -474,11 +476,20 @@ class DB {
     public void GET_AKT() {
         try {
             String tmp;
+            String[] tmp2;
             if (this.conn != null) {
-                ResultSet executeQuery = this.conn.createStatement().executeQuery("SELECT max(DGAKT) FROM VERS");
+                //ResultSet executeQuery = this.conn.createStatement().executeQuery("SELECT max(DGAKT) FROM VERS");
+                ResultSet executeQuery = this.conn.createStatement().executeQuery("SELECT * FROM VERS WHERE DGAKT = (SELECT max(DGAKT) FROM VERS)");
                 executeQuery.next();
-                tmp = executeQuery.getString(1);
-                System.out.println("AKT: " + tmp);
+                tmp = executeQuery.getString(3);
+                tmp2 = tmp.toString().split("\\.");
+                if(tmp2.length>0)
+                    tmp = tmp2[0];
+                this.VER = tmp;
+                System.out.println("VERSJA: " + tmp);
+                tmp = executeQuery.getString(4);
+                System.out.println("AKTUALIZACJA: " + tmp);
+                //tmp = executeQuery.getString("DGAKT");
                 this.AKT = tmp;
             }
         } catch (SQLException ex) {
