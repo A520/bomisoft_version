@@ -51,6 +51,7 @@ public class bomisoft_version {
             Podglad okno;
             okno = new Podglad();
             okno.setVisible(true);
+            okno.WERSJA();
         }else{
             System.out.println("\n<--Zmienna local_srv-->");
             //Klasa danych serwera lokalnego

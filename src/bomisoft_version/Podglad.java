@@ -4,8 +4,11 @@
  */
 package bomisoft_version;
 
+import java.awt.Desktop;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -20,6 +23,9 @@ public class Podglad extends javax.swing.JFrame {
     * Wywołuje pełną aktualizacje danych na podstawie wskazanego obiektu DB
     * @param cel wskazany obiekt DB
     */
+   public void WERSJA(){
+       this.WER_APLI.setText("Wersja aplikacji: " + GlobalDataStore.VERSION);
+   }
    public void Aktualizacja(DB cel){
        ID(cel);
        BLOZ(cel);
@@ -123,7 +129,7 @@ public class Podglad extends javax.swing.JFrame {
                 {
                     System.out.println("Musisz podac hasło!!");
                     if(GlobalDataStore.IfGUI)
-                        JOptionPane.showMessageDialog(null, "Musisz podac hasło!!");
+                        JOptionPane.showMessageDialog(null, "Hasło nie może zawierać * (gwiazdek) !!");
                 }
                 else
                 {
@@ -185,6 +191,10 @@ public class Podglad extends javax.swing.JFrame {
         KATALOGI = new javax.swing.JTextField();
         PASSY = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        WER_APLI = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -452,15 +462,39 @@ public class Podglad extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Konfiguracja", jPanel4);
 
+        jLabel15.setText("Autor: Opłotny Marek");
+
+        jLabel16.setText("Firma: Bomisoft Sp. z o. o.");
+
+        WER_APLI.setText("Wersja aplikacji: null");
+
+        jLabel17.setText("Kontakt: oplotny.marek@gmail.com");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 726, Short.MAX_VALUE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel15)
+                    .addComponent(jLabel16)
+                    .addComponent(WER_APLI)
+                    .addComponent(jLabel17))
+                .addContainerGap(546, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 445, Short.MAX_VALUE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel16)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(WER_APLI)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel17)
+                .addContainerGap(360, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Kontakt", jPanel5);
@@ -614,6 +648,7 @@ public class Podglad extends javax.swing.JFrame {
     private javax.swing.JComboBox TYPY;
     private javax.swing.JTextField USERY;
     private javax.swing.JTextField VERS;
+    private javax.swing.JLabel WER_APLI;
     private javax.swing.JButton WYSLIJ;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -624,6 +659,9 @@ public class Podglad extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
