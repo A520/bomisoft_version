@@ -107,39 +107,41 @@ public class Podglad extends javax.swing.JFrame {
         //local_srv.DISCONNECT();
     }
 
-    public void KonfSave(){
+    public boolean KonfSave(){
         Properties prop = new Properties();
         try {
-    		//set the properties value
-                String tmpTYP;
-                if(TYPY.getSelectedIndex()==0)
-                    tmpTYP = "oracle";
-                else
-                    tmpTYP = "firebird";
-    		prop.setProperty("typ", tmpTYP);
-    		prop.setProperty("host", HOSTY.getText());
-    		prop.setProperty("port", PORTY.getText());
-                prop.setProperty("schem", SCHEMATY.getText());
-                prop.setProperty("user", USERY.getText());
-                prop.setProperty("pass", PASSY.getText());
-                prop.setProperty("dir", KATALOGI.getText());
- 
     		//save properties to project root folder
                 if(PASSY.getText().matches(".*\\*"))
                 {
                     System.out.println("Musisz podac hasło!!");
                     if(GlobalDataStore.IfGUI)
                         JOptionPane.showMessageDialog(null, "Hasło nie może zawierać * (gwiazdek) !!");
+                    return false;
                 }
                 else
                 {
                     prop.store(new FileOutputStream(GlobalDataStore.jarDir + "/db.properties"), null);
                     if(GlobalDataStore.IfGUI)
                         JOptionPane.showMessageDialog(null, "Zapisano ustawienia");
+                    //set the properties value
+                    String tmpTYP;
+                    if(TYPY.getSelectedIndex()==0)
+                        tmpTYP = "oracle";
+                    else
+                        tmpTYP = "firebird";
+        		prop.setProperty("typ", tmpTYP);
+        		prop.setProperty("host", HOSTY.getText());
+        		prop.setProperty("port", PORTY.getText());
+                    prop.setProperty("schem", SCHEMATY.getText());
+                    prop.setProperty("user", USERY.getText());
+                    prop.setProperty("pass", PASSY.getText());
+                    prop.setProperty("dir", KATALOGI.getText());
+                    return true;
                 }
  
     	} catch (IOException ex) {
     		ex.printStackTrace();
+                return false;
         }
     }
     /**
@@ -208,6 +210,7 @@ public class Podglad extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Bomisoft Version");
 
         jLabel1.setText("ID apteki:");
 
@@ -349,6 +352,11 @@ public class Podglad extends javax.swing.JFrame {
         TYPY.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Oracle", "FireBird" }));
         TYPY.setToolTipText("");
         TYPY.setEnabled(false);
+        TYPY.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                TYPYItemStateChanged(evt);
+            }
+        });
 
         HOSTY.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
         HOSTY.setText("127.0.0.1");
@@ -503,7 +511,7 @@ public class Podglad extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 731, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -549,16 +557,19 @@ public class Podglad extends javax.swing.JFrame {
         }
         else
         {
-            KonfSave();
-            TYPY.setEnabled(false);
-            HOSTY.setEnabled(false);
-            PORTY.setEnabled(false);
-            SCHEMATY.setEnabled(false);
-            USERY.setEnabled(false);
-            PASSY.setEnabled(false);
-            KATALOGI.setEnabled(false);
-            jButton3.setText("Aktualizuj");
-            KonfLoad();
+            if(KonfSave())
+            {
+                TYPY.setEnabled(false);
+                HOSTY.setEnabled(false);
+                PORTY.setEnabled(false);
+                SCHEMATY.setEnabled(false);
+                USERY.setEnabled(false);
+                PASSY.setEnabled(false);
+                KATALOGI.setEnabled(false);
+                jButton3.setText("Aktualizuj");
+                KonfLoad();
+            }
+                
         }
     }//GEN-LAST:event_jButton3MouseClicked
 
@@ -589,6 +600,21 @@ public class Podglad extends javax.swing.JFrame {
             }
         dest_srv.DISCONNECT();
     }//GEN-LAST:event_WYSLIJMouseClicked
+
+    private void TYPYItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_TYPYItemStateChanged
+        // TODO add your handling code here:
+        if(this.TYPY.getSelectedIndex()==0)
+        {
+            this.PORTY.setText("1521");
+            this.SCHEMATY.setText("XE");
+        }
+        else
+            if(this.TYPY.getSelectedIndex()==1)
+            {
+                this.PORTY.setText("3050");
+                this.SCHEMATY.setText("C:/KSBAZA/KS-APW/wapteka.fdb");
+            }
+    }//GEN-LAST:event_TYPYItemStateChanged
 
     /**
      * @param args the command line arguments
